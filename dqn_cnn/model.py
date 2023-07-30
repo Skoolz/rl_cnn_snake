@@ -33,6 +33,8 @@ class DQN(nn.Module):
         self.fc_adv1 = nn.Linear(576, 512)
         self.fc_adv2 = nn.Linear(512, outputs)
 
+        self.fc_v = nn.Linear(576,1)
+
     # Called with either one element to determine next action, or a batch
     # during optimization. Returns tensor([[left0exp,right0exp]...]).
     def forward(self, x):
@@ -44,7 +46,10 @@ class DQN(nn.Module):
         adv = F.relu(self.fc_adv1(x))
         adv = self.fc_adv2(adv)
 
-        return adv
+        v = F.relu(self.fc_v(x))
+        
+
+        return v-adv-torch.mean(adv)
 
 
 class QTrainer:
